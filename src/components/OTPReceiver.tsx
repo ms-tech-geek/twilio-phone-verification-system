@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MessageSquare, RefreshCw } from 'lucide-react';
 import type { OTPMessage, VirtualNumber } from '../types';
+import { getMessages, pollForMessages } from '../lib/twilio';
 
 interface OTPReceiverProps {
   selectedNumber: VirtualNumber;
@@ -13,36 +14,31 @@ export function OTPReceiver({ selectedNumber, onComplete }: OTPReceiverProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const eventSource = new EventSource(`/api/messages/${selectedNumber.id}`);
+    // Initial fetch
+    fetchMessages();
 
-    eventSource.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      setMessages((prev) => [...prev, message]);
-    };
+    // Start polling for new messages
+    const stopPolling = pollForMessages(selectedNumber.number, (newMessages) => {
+      setMessages((prev) => [...prev, ...newMessages]);
+    });
 
-    eventSource.onerror = () => {
-      setError('Connection lost. Please refresh to try again.');
-      eventSource.close();
-    };
-
-    return () => eventSource.close();
+    return () => stopPolling();
   }, [selectedNumber]);
 
-  const handleRefresh = () => {
+  const fetchMessages = async () => {
     setLoading(true);
-    fetch(`/api/messages/${selectedNumber.id}/refresh`)
-      .then((res) => res.json())
-      .then((newMessages) => {
-        setMessages((prev) => [...prev, ...newMessages]);
-        setError(null);
-      })
-      .catch(() => {
-        setError('Failed to refresh messages. Please try again.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const newMessages = await getMessages(selectedNumber.number);
+      setMessages(newMessages);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch messages. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleRefresh = () => fetchMessages();
 
   return (
     <div className="w-full max-w-md">

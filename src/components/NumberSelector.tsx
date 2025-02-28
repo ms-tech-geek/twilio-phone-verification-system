@@ -2,6 +2,7 @@ import React from 'react';
 import { PhoneCall } from 'lucide-react';
 import type { VirtualNumber } from '../types';
 import { useState, useEffect } from 'react';
+import { getAvailableNumbers } from '../lib/twilio';
 
 interface NumberSelectorProps {
   onSelect: (number: VirtualNumber) => void;
@@ -18,10 +19,8 @@ export function NumberSelector({ onSelect }: NumberSelectorProps) {
 
   const fetchAvailableNumbers = async () => {
     try {
-      const response = await fetch('/api/available-numbers');
-      if (!response.ok) throw new Error('Failed to fetch numbers');
-      const data = await response.json();
-      setNumbers(data);
+      const numbers = await getAvailableNumbers();
+      setNumbers(numbers);
       setError(null);
     } catch (err) {
       setError('Failed to load available numbers. Please try again later.');
@@ -62,7 +61,7 @@ export function NumberSelector({ onSelect }: NumberSelectorProps) {
             <div className="text-sm text-gray-500">{number.country}</div>
             <div className="mt-2">
               <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
-                ${number.available ? 'Available' : 'Reserved'}
+                Available
               </span>
             </div>
           </button>
