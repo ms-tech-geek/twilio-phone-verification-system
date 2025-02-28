@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MessageSquare, RefreshCw } from 'lucide-react';
 import type { OTPMessage, VirtualNumber } from '../types';
 import { getMessages, pollForMessages } from '../lib/twilio';
+import { RegistrationGuide } from './RegistrationGuide';
 
 interface OTPReceiverProps {
   selectedNumber: VirtualNumber;
@@ -42,6 +43,8 @@ export function OTPReceiver({ selectedNumber, onComplete }: OTPReceiverProps) {
 
   return (
     <div className="w-full max-w-md">
+      <RegistrationGuide number={selectedNumber} />
+
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <MessageSquare className="w-6 h-6 text-indigo-600" />
@@ -65,14 +68,17 @@ export function OTPReceiver({ selectedNumber, onComplete }: OTPReceiverProps) {
         <div className="divide-y divide-gray-200">
           {messages.length === 0 ? (
             <div className="p-4 text-center text-gray-500">
-              Waiting for messages...
+              <div className="animate-pulse">
+                <div className="mb-2">Waiting for verification code from Facebook...</div>
+                <div className="text-sm">Enter your details on Facebook to receive the code</div>
+              </div>
             </div>
           ) : (
             messages.map((message) => (
               <div key={message.id} className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-indigo-600">
-                    {message.platform}
+                    SMS from {message.platform}
                   </span>
                   <span className="text-sm text-gray-500">
                     {message.timestamp.toLocaleTimeString()}
