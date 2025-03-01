@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MessageSquare, RefreshCw } from 'lucide-react';
 import type { OTPMessage, VirtualNumber } from '../types';
-import { getMessages, pollForMessages } from '../lib/twilio';
+import { getMessages, pollForMessages } from '../lib/burner';
 import { RegistrationGuide } from './RegistrationGuide';
 
 interface OTPReceiverProps {
@@ -69,7 +69,7 @@ export function OTPReceiver({ selectedNumber, onComplete }: OTPReceiverProps) {
           {messages.length === 0 ? (
             <div className="p-4 text-center text-gray-500">
               <div className="animate-pulse">
-                <div className="mb-2">Waiting for verification code from Facebook...</div>
+                <div className="mb-2">Waiting for SMS verification code...</div>
                 <div className="text-sm">Enter your details on Facebook to receive the code</div>
               </div>
             </div>
