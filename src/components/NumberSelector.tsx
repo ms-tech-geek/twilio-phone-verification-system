@@ -2,7 +2,7 @@ import React from 'react';
 import { PhoneCall } from 'lucide-react';
 import type { VirtualNumber } from '../types';
 import { useState, useEffect } from 'react';
-import { getAvailableNumbers } from '../lib/zyla';
+import { getAvailableNumbers } from '../lib/getotp';
 
 interface NumberSelectorProps {
   onSelect: (number: VirtualNumber) => void;

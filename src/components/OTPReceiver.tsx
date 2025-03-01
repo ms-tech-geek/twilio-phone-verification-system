@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MessageSquare, RefreshCw } from 'lucide-react';
 import type { OTPMessage, VirtualNumber } from '../types';
-import { getMessages, pollForMessages } from '../lib/zyla';
+import { getMessages, pollForMessages } from '../lib/getotp';
 import { RegistrationGuide } from './RegistrationGuide';
 
 interface OTPReceiverProps {
